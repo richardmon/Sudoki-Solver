@@ -1,0 +1,13 @@
+scikit-image
+jupyter
+numpy
+scipy
+pytest
+pytest-flask
+pytest-mock
+rq
+redis
+torch
+torchvision
+flask
+pillow==6.0.0

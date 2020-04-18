@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+<h2>Predicted fields</h2>
+
+<span>
+        This is my prediction, please check them, and fix where I made a mistakes.
+        Just click the space and replace it, delete it, or add it.
+</span>
+<br/>
+<br/>
+
+<div style="width:{{width}}px; max-width:{{width}}px; height:{{height}}px; max-heigh:{{height}}px; overflow:hidden;">
+
+        {% set count = [] %}
+        <table
+                id="table">
+                {% for row in table %}
+                <tr>
+                        {% for col  in row  %}
+                        {% if col %}
+                        <td>
+                                <input
+                                        value = "{{ inference_array[count | length] }}"
+                                        id="input-table"
+                                        type="text"
+                                />
+                                {% if count.append(1) %}{% endif %}
+                        </td>
+                        {% else %}
+                        <td>
+                                <input id="input-table" type="text"/>
+                        </td>
+                        {% endif %}
+                        {% endfor %}
+                </tr>
+                {% endfor %}
+
+        </table>
+
+</div>
+
+<button id="solve" class="button top-margin" type="submit"> Solve </button>
+
+<script charset="utf-8">
+        const table = document.getElementById("table");
+        const image = "url('data:image/png;base64, {{image | safe}}')";
+        document.getElementById("table").style.backgroundImage=image;
+
+        const button = document.getElementById("solve");
+        button.onclick = function (event){
+                let solution = []
+                const trs = Array.from(table.getElementsByTagName("tr"));
+                trs.forEach(tr => {
+                        const tds = Array.from(tr.getElementsByTagName("td"));
+                        let column = [];
+                        tds.forEach(td => {
+                                const input = td.getElementsByTagName("input")[0];
+                                if (input.value) {
+                                        column.push(input.value);
+                                } else { column.push(0); }
+                        });
+                        solution.push(column);
+                });
+                const url = "/prediction/{{job_id}}";
+                const data = {
+                        method: "POST",
+                        body: JSON.stringify(solution),
+                        headers:{ 'Content-Type': 'application/json' },
+                }
+                fetch(url, data)
+                        .then(res => res.text())
+                        .catch(error => console.error('Error', error))
+                        .then(response => {
+                                window.location.href = response
+                        });
+        }
+</script>
+
+{% endblock %}

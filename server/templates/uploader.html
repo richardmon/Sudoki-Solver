@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block container %}
+<div>
+        Image has been uploaded succesfully. </br>
+        Processing it.
+        <script>
+                const job = "{{ job }}"
+                this.setInterval(()=> {
+                        fetch('/job/' + job)
+                                .then((response)=> {
+                                        return response.json()
+                                }).then((json)=>{
+                                        window.location.href = '/corners/' + job
+                                });
+                }, 2000)
+        </script>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+<img src="data:image/png;base64, {{ image }}">
+
+<button class="button top-margin" type="submit"> Process </button>
+
+<script>
+        const job = "{{job_id}}";
+        const button = document.getElementsByClassName("button")[0];
+        button.onclick = function sendCorners(event){
+                const url = '/transform/' + job;
+                const data = {
+                        method: 'POST',
+                        headers:{ 'Content-Type': 'application/json' }
+                }
+                fetch(url, data)
+                        .then((res) => res.text())
+                        .catch(error => console.error('Error:', error))
+                        .then(response => {
+                                window.location.href = response
+                        });
+        };
+
+</script>
+
+{% endblock %}

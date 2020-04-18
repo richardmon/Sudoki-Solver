@@ -1,0 +1,10 @@
+Session.vim
+.mypy_cache/
+env/
+tags
+tags.lock
+__pycache__/
+.mypy_cache/
+**/__pycache__
+.python-version
+.ipynb_checkpoints/

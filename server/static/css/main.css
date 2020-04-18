@@ -1,0 +1,107 @@
+@font-face {
+  font-family: "Fira Code";
+  src: url(/static/fonts/FiraCode-Regular.otf);
+} 
+
+html {
+        height: 100%;
+        width: 100%;
+        font-family: "Fira Code";
+}
+
+body {
+        height: 100%;
+        width: 100%;
+        background-color: white;
+        display: grid;
+        justify-items: center;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+}
+
+h1 {
+        text-align:center;
+        width: 100%;
+        grid-column-start: 1;
+        grid-column-end: 6;
+        font-size: 28px;
+}
+
+.container {
+        grid-column-start: 2;
+        grid-column-end: 5;
+        grid-row-start: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+}
+
+input[type=file]{
+        width: 0.1px;
+        height: 0.1px;
+        opacity: 0;
+        overflow: hidden;
+        position: absolute;
+        z-index: -1;
+}
+
+form{
+        display: inline-flex;
+}
+
+label[for="file_field"] {
+        border: 1px solid rgba(55, 53, 47, 0.3);
+        box-shadow: rgba(15, 15, 15, 0.1) 0px 1px 2px;
+        padding: 0px 12px;
+        border-radius: 2px;
+        background: white;
+}
+
+.top-margin {
+        margin-top: 1em;
+}
+
+.button {
+        border: 1px solid rgba(55, 53, 47, 0.3);
+        box-shadow: rgba(15, 15, 15, 0.1) 0px 1px 2px;
+        padding: 0px 12px;
+        border-radius: 2px;
+        background: white;
+        color: black;
+        font-family: "Fira Code";
+        max-width: 250px;
+}
+
+
+.button:last-child {
+        margin-left: 20px
+}
+
+table {
+        overflow: hidden;
+        width: 360px;
+        height: 360px;
+}
+
+#input-table {
+        background: transparent;
+        border: 0px;
+        width: 35px;
+        color: rgba(255, 0, 0, 0.5);
+        text-align: center;
+        height: 35px;
+        font-size: 30px;
+}
+
+#solution-table {
+        border-collapse: collapse;
+        border: 5px solid black;
+}
+
+#solution-table tr td {
+        border: 1px solid black;
+}
+
+#solution-table td {
+        text-align: center;
+}

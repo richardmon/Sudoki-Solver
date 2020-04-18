@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block container %}
+        <h2> Select the Image Corners by Moving the Dots. </h2>
+        <canvas id="can" width="{{width}}" height="{{height}}">
+        </canvas>
+        <button class="button top-margin" onclick="sendCorners"> Continue </button>
+        <script>
+                const RADIUS = 10;
+                const corners = {{ corners|safe  }}
+                const canvas = document.getElementById("can");
+                const ctx = canvas.getContext("2d");
+                let movedCorners = {'up_left': false, 'up_right': false, 'down_left': false, 'down_right': false}
+                drawImage(canvas, ctx)
+
+                function drawImage(canvas, context){
+                        const image = new Image();
+                        image.onload = function(){
+                                context.drawImage(image, 0, 0);
+                                drawItems(canvas, context, corners);
+                        };
+                        image.src = "data:image/png;base64, {{image_str| safe}}";
+                }
+
+                function isIntersect(point, circle) {
+                        return Math.sqrt((point.x-circle[0]) ** 2 + (point.y - circle[1]) ** 2) < RADIUS
+                }
+
+                function drawItems(canvas, context, corners){
+                        const up_left = corners["up_left"]
+                        const down_left = corners["down_left"] 
+                        const up_right = corners["up_right"] 
+                        const down_right = corners["down_right"]
+                        // Draw points
+                        drawPoint(canvas, context, up_left[0], up_left[1]) 
+                        drawPoint(canvas, context, down_left[0], down_left[1]) 
+                        drawPoint(canvas, context, up_right[0], up_right[1]) 
+                        drawPoint(canvas, context, down_right[0], down_right[1]) 
+                        // drawLines 
+                        drawLine(canvas, context, up_left, up_right); 
+                        drawLine(canvas, context, up_right, down_right); 
+                        drawLine(canvas, context, down_right, down_left); 
+                        drawLine(canvas, context, down_left, up_left);
+                }
+
+                function drawPoint(canvas, context, x, y){
+                        context.beginPath();
+                        context.fillStyle = '#0000FF';
+                        context.arc(x, y, RADIUS, 0, 2 * Math.PI, false);
+                        context.fill();
+                }
+
+                function drawLine(canvas, context, point1, point2){
+                        context.beginPath();
+                        context.moveTo(point1[0], point1[1]);
+                        context.strokeStyle = '#0000FF';
+                        context.lineTo(point2[0], point2[1]);
+                        context.lineWidth = 5;
+                        context.stroke(); 
+                }
+
+                canvas.addEventListener('mouseup', (e)=> {
+                        movedCorners['up_left'] = false;
+                        movedCorners['down_left'] = false;
+                        movedCorners['up_right'] = false;
+                        movedCorners['down_right'] = false;
+                });
+
+                canvas.addEventListener('mousemove', (e) => {
+                        const viewportOffset = canvas.getBoundingClientRect();
+                        const top_offset = viewportOffset.top;
+                        const left_offset = viewportOffset.left;
+
+                        const pos = {
+                                x: e.clientX - left_offset,
+                                y: e.clientY - top_offset
+                        }; 
+
+                        if (movedCorners['up_left']){
+                                corners['up_left'] = [pos.x, pos.y];
+                                ctx.restore();
+                                drawImage(canvas, ctx);
+                        } else if (movedCorners['down_left']){
+                                corners['down_left'] = [pos.x, pos.y];
+                                ctx.restore();
+                                drawImage(canvas, ctx);
+                        } else if (movedCorners['up_right']){
+                                corners['up_right'] = [pos.x, pos.y];
+                                ctx.restore();
+                                drawImage(canvas, ctx);
+                        } else if (movedCorners['down_right']){
+                                corners['down_right'] = [pos.x, pos.y];
+                                ctx.restore();
+                                drawImage(canvas, ctx);
+                        }
+                });
+
+                canvas.addEventListener('mousedown', (e) => {
+                        const viewportOffset = canvas.getBoundingClientRect();
+                        const top_offset = viewportOffset.top;
+                        const left_offset = viewportOffset.left;
+
+                        const pos = {
+                                x: e.clientX - left_offset,
+                                y: e.clientY - top_offset
+                        };
+
+                        const up_left = corners["up_left"]; 
+                        const down_left = corners["down_left"]; 
+                        const up_right = corners["up_right"]; 
+                        const down_right = corners["down_right"];
+
+                        if (isIntersect(pos, up_left)){
+                                movedCorners['up_left'] = true;
+                        } else if (isIntersect(pos, down_left)){
+                                movedCorners['down_left'] = true;
+                        } else if (isIntersect(pos, up_right)){
+                                movedCorners['up_right'] = true;
+                        } else if (isIntersect(pos, down_right)){
+                                movedCorners['down_right'] = true;
+                        }
+                });
+
+                const button = document.getElementsByClassName("button")[0]
+                button.onclick = function sendCorners(event){
+                        const json = JSON.stringify(corners);
+                        const url = '/corners/{{job_id}}';
+                        const data = {
+                                method: 'POST',
+                                body: json,
+                                headers:{ 
+                                        'Content-Type': 'application/json'
+                                }
+                        };
+                        fetch(url, data)
+                                .then((res) => res.text())
+                                .catch(error => console.error('Error:', error))
+                                .then(response => {
+                                        window.location.href = response
+                                });
+                }
+</script>
+{% endblock %}

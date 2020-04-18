@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block container %}
+<form action = "/uploader" method = "POST" 
+      enctype = "multipart/form-data">
+        <label for="file_field">Select the Sudoku be solved</label>
+        <input class="button" id="file_field" type = "file" name = "file" />
+        <button  class="button"type="submit"> Send </button>
+</form>
+{% endblock %}

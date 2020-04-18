@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block container %}
+        <span>
+                Solving the sudoku
+        </span>
+        <script>
+                const job = "{{ job }}"
+                this.setInterval(()=> {
+                        fetch('/job/' + job)
+                                .then((response)=> {
+                                        return response.json();
+                                }).then((json)=>{
+                                        window.location.href = '/solution/' + job
+                                });
+                }, 1000)
+        </script>
+{% endblock %}

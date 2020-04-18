@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block container %}
+
+
+<h4>Sorry 😞, it seems I wasn't able to solve your sudoku,
+        Please make sure that your input is correct and that the sudoku is solvable.</h4>
+
+<button class="button" > Go back and try again </button>
+
+<script>
+        const button = document.getElementsByClassName("button")[0];
+        button.onclick = (event) => { window.history.go(-2) }
+</script>
+
+{% endblock %}
